@@ -26,17 +26,6 @@ def runAI(table,playernumber):
 	return posli[i]
 
 
-
-def bogoAI(table,playernumber):
-	posli=module.getcanpos(table,playernumber)
-	size=len(posli)
-	if size==0:
-		return 0
-	return posli[random.randint(0,size-1)]
-
-
-
-
 roottable=[
 [ 0, 0, 0, 0, 0, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0],
@@ -104,12 +93,4 @@ def main():
 
 if __name__=="__main__":
 	main()
-
-
-
-
-
-
-
-
 

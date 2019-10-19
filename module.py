@@ -11,6 +11,7 @@ class pos:
 	y=0
 
 dirx=[-1, 0, 1, 1, 1, 0,-1,-1]
+<<<<<<< HEAD
 diry=[-1,-1,-1, 0, 1, 1, 1, 0]
 
 def turned(pos,table,playernumber):
@@ -159,3 +160,6 @@ def reverse(x,y,i,table,playernumber):
 if __name__=="__main__":
 	pass
 
+=======
+diry=[-1,-1,-1, 0, 1, 1, 1, 0]
+>>>>>>> fb85e968726946c77c05184a49933e423767e645
