@@ -2,16 +2,15 @@ import copy
 import random
 import sys
 
-sys.setrecursionlimit(99999)
+sys.setrecursionlimit(9999999)
 
 width=4
-
+tablevalue=500
 class pos:
 	x=0
 	y=0
 
 dirx=[-1, 0, 1, 1, 1, 0,-1,-1]
-<<<<<<< HEAD
 diry=[-1,-1,-1, 0, 1, 1, 1, 0]
 
 def turned(pos,table,playernumber):
@@ -68,12 +67,14 @@ def	canput(x,y,table,playernumber):
 
 def launchmonte(table,playernumber,pos,i,valuelist):
 	print(i)
+	Depth=1
 	tablemap=copy.deepcopy(table)
 	tablemap=turned(pos,tablemap,playernumber)
-	valuelist[i]=monte(tablemap,-playernumber,playernumber)
+	tabletimes=[0 for i in range(tablevalue)]
+	valuelist[i]=monte(tablemap,-playernumber,playernumber,Depth,i,tabletimes)/tablevalue
 	return 0
 
-def judge(table,playernumber,color):
+def judge(table,playernumber):
 	mikata=0
 	teki=0
 	for i in range(len(table)):
@@ -85,15 +86,18 @@ def judge(table,playernumber,color):
 					teki+=1
 	return 0 if teki>mikata else 1
 
-def monte(table,playernumber,color):
+def monte(table,playernumber,color,Depth,d,tabletimes):
 	randlist=[]
-	if nullmap(table)==1:
+	if tabletimes[d]==tablevalue:
+		return 0
+	if nullmap(table)==1 or len(getcanpos(table,1))==0 and len(getcanpos(table,-1))==0:
+		tabletimes[d]+=1
 		return judge(table,color)
 	poslist=getcanpos(table,playernumber)
 	count=0
 	wi=len(poslist)
 	if wi==0:
-		return monte(table,-playernumber,playernumber)
+		return monte(table,-playernumber,playernumber,Depth,d,tabletimes)
 	
 	for i in range(min(wi,width)):
 		randindex=0
@@ -105,10 +109,9 @@ def monte(table,playernumber,color):
 			break
 
 		tablemap=copy.deepcopy(table)
-		turned(poslist[i],tablemap,playernumber)
-		count+=monte(tablemap,-playernumber,playernumber)
+		tablemap=turned(poslist[i],tablemap,playernumber)
+		count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes)
 	return count
-
 
 def getcanpos(table,playernumber):
 	#playnumが置ける場所をposクラスのリストで返す処理。多分そこそこ計算量が多い
@@ -142,7 +145,7 @@ def drawmap(table):
 
 def checkfield(x,y):
 	#範囲外か判断する処理
-	return (1) if (0 <= x <= 7 and 0 <= y <= 7) else  0
+	return (1) if (0 <= x and x <= 7 and 0 <= y and y <= 7) else  0
 
 def reverse(x,y,i,table,playernumber):
 	if checkfield(x,y)==0:
@@ -159,7 +162,3 @@ def reverse(x,y,i,table,playernumber):
 
 if __name__=="__main__":
 	pass
-
-=======
-diry=[-1,-1,-1, 0, 1, 1, 1, 0]
->>>>>>> fb85e968726946c77c05184a49933e423767e645
