@@ -5,6 +5,7 @@ import os
 import random
 import threading
 import sys
+import socket
 
 sys.setrecursionlimit(999999999)
 
@@ -17,6 +18,9 @@ def bogoAI(table,playernumber):
 
 def runAI(table,playernumber):
 	posli=module.getcanpos(table,playernumber)
+	print("y,x:",end="")
+	for i in range(len(posli)):
+		print(posli[i].y,"",posli[i].x,end=",")
 	parallel=len(posli)
 	threads=[]
 	value=[0.0 for i in range(parallel)]
@@ -36,15 +40,15 @@ def runAI(table,playernumber):
 		if maxvalue<value[i]:
 			maxindex=i
 			maxvalue=value[i]
-	return posli[i]
+	return posli[maxindex]
 
 
 roottable=[
 [ 0, 0, 0, 0, 0, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0, 1,-1, 0, 0, 0],
 [ 0, 0, 0,-1, 1, 0, 0, 0],
+[ 0, 0, 0, 1,-1, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0],
 [ 0, 0, 0, 0, 0, 0, 0, 0]
@@ -53,6 +57,7 @@ roottable=[
 
 def main():
 	#os.system("cls")
+	os.system("clear")
 	global roottable
 	playercolor=3
 	while True:
@@ -61,6 +66,7 @@ def main():
 		if playercolor=="break":
 			return 0
 		#os.system("cls")
+		os.system("clear")
 		if playercolor=="1" or playercolor=="-1":
 			playercolor=int(playercolor)
 			break
@@ -69,20 +75,25 @@ def main():
 	playercon=[1,-1]
 	turn=0
 	while True:
-		module.drawmap(roottable)
 		nowplayer=playercon[turn%2]
+		module.drawmap(roottable,nowplayer)
 		print("turn",turn,"nowplayer",nowplayer)
 		if nowplayer!=playercolor:
 			AIpos=runAI(roottable,nowplayer)
 			#AIpos=bogoAI(roottable,nowplayer)
 			#os.system("cls")
+			os.system("clear")
 			if AIpos==0:
 				turn+=1
 				continue
 			roottable=module.turned(AIpos,roottable,nowplayer)
 			turn+=1
 			continue
-
+		if len(module.getcanpos(roottable,nowplayer))==0:
+			if len(module.getcanpos(roottable,-1*nowplayer))==0 or module.nullmap(roottable)==1:
+				break
+			os.system("clear")
+			continue
 		print("input y,x:",end="")
 		inpu=input()
 		if inpu=="break":
@@ -90,18 +101,20 @@ def main():
 		inp=inpu.split(",")
 		if len(inp)!=2 or module.checkfield(int(inp[1]),int(inp[0]))!=1:
 			#os.system("cls")
+			os.system("clear")
 			print("無効な入力です")
 			continue
 		place=module.pos()
 		place.y=int(inp[0])
 		place.x=int(inp[1])
 		#os.system("cls")
+		os.system("clear")
 		if module.canput(place.x,place.y,roottable,nowplayer)==1:
 			roottable=module.turned(place,roottable,nowplayer)
 			turn+=1
 		else:
 			print("無効な入力です")
-
+	module.drawmap(roottable,playercolor)
 	return 0
 
 if __name__=="__main__":

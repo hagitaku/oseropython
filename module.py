@@ -4,8 +4,8 @@ import sys
 
 sys.setrecursionlimit(9999999)
 
-width=4
-tablevalue=500
+width=5
+tablevalue=1000
 class pos:
 	x=0
 	y=0
@@ -125,7 +125,9 @@ def getcanpos(table,playernumber):
 				poslist.append(putpos)
 	return poslist
 
-def drawmap(table):
+def drawmap(table,playernumber):
+	posli=getcanpos(table,playernumber)
+	size=len(posli)
 	print(end="  ")
 	for i in range(8):
 		print(i,end=" ")
@@ -133,7 +135,14 @@ def drawmap(table):
 	for i in range(len(table)):
 		print(i,end=" ")
 		for k in range(len(table[i])):
-			if table[i][k]==0:
+			flg=0
+			for j in range(size):
+				if posli[j].y==i and posli[j].x==k:
+					flg=1
+					break
+			if flg==1:
+				print("✖︎",end=" ")
+			elif table[i][k]==0:
 				print("-",end=" ")
 			elif table[i][k]==1:
 				print("○",end=" ")
