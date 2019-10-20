@@ -59,8 +59,10 @@ roottable=[
 
 def main():
 	global roottable
-	#os.system("cls")
-	os.system("clear")
+	if os.name=="nt":
+		os.system("cls")
+	else:
+		os.system("clear")
 	playercolor=3
 	bogoflg=0
 	while True:
@@ -68,8 +70,10 @@ def main():
 		playercolor=input()
 		if playercolor=="break":
 			return 0
-		#os.system("cls")
-		os.system("clear")
+		if os.name=="nt":
+			os.system("cls")
+		else:
+			os.system("clear")
 		if playercolor=="1" or playercolor=="-1":
 			playercolor=int(playercolor)
 			break
@@ -84,8 +88,10 @@ def main():
 		if nowplayer!=playercolor:
 			AIpos=runAI(roottable,nowplayer)
 			#AIpos=bogoAI(roottable,nowplayer)
-			#os.system("cls")
-			os.system("clear")
+			if os.name=="nt":
+				os.system("cls")
+			else:
+				os.system("clear")
 			if AIpos==0:
 				turn+=1
 				continue
@@ -95,7 +101,10 @@ def main():
 		if len(module.getcanpos(roottable,nowplayer))==0:
 			if len(module.getcanpos(roottable,-1*nowplayer))==0 or module.nullmap(roottable)==1:
 				break
-			os.system("clear")
+			if os.name=="nt":
+				os.system("cls")
+			else:
+				os.system("clear")
 			continue
 		print("input y,x:",end="")
 		inpu=input()
@@ -103,15 +112,19 @@ def main():
 			break
 		inp=inpu.split(",")
 		if len(inp)!=2 or module.checkfield(int(inp[1]),int(inp[0]))!=1:
-			#os.system("cls")
-			os.system("clear")
+			if os.name=="nt":
+				os.system("cls")
+			else:
+				os.system("clear")
 			print("無効な入力です")
 			continue
 		place=module.pos()
 		place.y=int(inp[0])
 		place.x=int(inp[1])
-		#os.system("cls")
-		os.system("clear")
+		if os.name=="nt":
+			os.system("cls")
+		else:
+			os.system("clear")
 		if module.canput(place.x,place.y,roottable,nowplayer)==1:
 			roottable=module.turned(place,roottable,nowplayer)
 			turn+=1

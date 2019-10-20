@@ -134,7 +134,7 @@ def drawmap(table,playernumber):
 	size=len(posli)
 	print(end="  ")
 	for i in range(len(table)):
-		print(i,end=" ")
+		print(i,end="  ")
 	print()
 	for i in range(len(table)):
 		print(i,end=" ")
@@ -147,7 +147,7 @@ def drawmap(table,playernumber):
 			if flg==1:
 				print("✖︎",end=" ")
 			elif table[i][k]==0:
-				print("-",end=" ")
+				print("ー",end=" ")
 			elif table[i][k]==1:
 				print("○",end=" ")
 			elif table[i][k]==-1:
