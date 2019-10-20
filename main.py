@@ -18,10 +18,10 @@ def bogoAI(table,playernumber):
 
 def runAI(table,playernumber):
 	posli=module.getcanpos(table,playernumber)
-	print("y,x:",end="")
-	for i in range(len(posli)):
-		print(posli[i].y,"",posli[i].x,end=",")
 	parallel=len(posli)
+	for i in range(parallel):
+		if (posli[i].y==0 and posli[i].x==0) or (posli[i].y==0 and posli[i].x==7) or (posli[i].y==7 and posli[i].x==0) or (posli[i].y==7 and posli[i].x==7):
+			return posli[i]
 	threads=[]
 	value=[0.0 for i in range(parallel)]
 #	for i in range(parallel):
@@ -44,22 +44,25 @@ def runAI(table,playernumber):
 
 
 roottable=[
-[ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0,-1, 1, 0, 0, 0],
-[ 0, 0, 0, 1,-1, 0, 0, 0],
-[ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0, 0, 0, 0, 0, 0],
-[ 0, 0, 0, 0, 0, 0, 0, 0]
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 1,-1, 0, 0, 0, 0],
+[ 0, 0, 0, 0,-1, 1, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
 
 
 def main():
+	global roottable
 	#os.system("cls")
 	os.system("clear")
-	global roottable
 	playercolor=3
+	bogoflg=0
 	while True:
 		print("先攻の場合は1,後攻は-1:",end="")
 		playercolor=input()
@@ -114,7 +117,7 @@ def main():
 			turn+=1
 		else:
 			print("無効な入力です")
-	module.drawmap(roottable,playercolor)
+	print("player1=","won" if module.judge(roottable,1)==1 else "Defeated","player-1=","won" if module.judge(roottable,-1)==1 else "Defeated")
 	return 0
 
 if __name__=="__main__":

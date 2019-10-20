@@ -4,7 +4,7 @@ import sys
 
 sys.setrecursionlimit(9999999)
 
-width=5
+width=20
 tablevalue=1000
 class pos:
 	x=0
@@ -23,7 +23,10 @@ def turned(pos,table,playernumber):
 	return tablemap
 
 def canputflg(x,y,table,i,playernumber):
+
 	if checkfield(x,y)==0:#現在地が範囲外だったらすぐにおけないことを示す0を返す
+		return 0
+	elif table[y][x]==0:
 		return 0
 	elif table[y][x]==playernumber:
 		return 1
@@ -56,8 +59,10 @@ def nullmap(table):
 	return 0
 
 def	canput(x,y,table,playernumber):
-	#送られた座標にコマを置けるか判断する処理処理
+	#送られた座標にコマを置けるか判断する処理
 	if table[y][x]!=0:
+		return 0
+	if checkfield(x,y)==0:
 		return 0
 	for i in range(8):
 		if checkfield(x+dirx[i],y+diry[i])==1 and table[y+diry[i]][x+dirx[i]]==-1*playernumber:
@@ -66,7 +71,6 @@ def	canput(x,y,table,playernumber):
 	return 0
 
 def launchmonte(table,playernumber,pos,i,valuelist):
-	print(i)
 	Depth=1
 	tablemap=copy.deepcopy(table)
 	tablemap=turned(pos,tablemap,playernumber)
@@ -129,7 +133,7 @@ def drawmap(table,playernumber):
 	posli=getcanpos(table,playernumber)
 	size=len(posli)
 	print(end="  ")
-	for i in range(8):
+	for i in range(len(table)):
 		print(i,end=" ")
 	print()
 	for i in range(len(table)):
@@ -154,6 +158,7 @@ def drawmap(table,playernumber):
 
 def checkfield(x,y):
 	#範囲外か判断する処理
+	#範囲内だったら1,範囲外だったら0
 	return (1) if (0 <= x and x <= 7 and 0 <= y and y <= 7) else  0
 
 def reverse(x,y,i,table,playernumber):
