@@ -4,8 +4,8 @@ import sys
 
 sys.setrecursionlimit(9999999)
 
-width=20
-tablevalue=1000
+width=10
+tablevalue=3000
 class pos:
 	x=0
 	y=0
@@ -75,7 +75,9 @@ def launchmonte(table,playernumber,pos,i,valuelist):
 	tablemap=copy.deepcopy(table)
 	tablemap=turned(pos,tablemap,playernumber)
 	tabletimes=[0 for i in range(tablevalue)]
-	valuelist[i]=monte(tablemap,-playernumber,playernumber,Depth,i,tabletimes)/tablevalue
+	monte(tablemap,-playernumber,playernumber,Depth,i,tabletimes,valuelist)
+	print("i=",i,":tabletimes[i]",tabletimes[i])
+	valuelist[i]=valuelist[i]/tabletimes[i]
 	return 0
 
 def judge(table,playernumber):
@@ -90,20 +92,30 @@ def judge(table,playernumber):
 					teki+=1
 	return 0 if teki>mikata else 1
 
-def monte(table,playernumber,color,Depth,d,tabletimes):
+def monte(table,playernumber,color,Depth,d,tabletimes,valuelist):
 	randlist=[]
 	if tabletimes[d]==tablevalue:
 		return 0
 	if nullmap(table)==1 or len(getcanpos(table,1))==0 and len(getcanpos(table,-1))==0:
 		tabletimes[d]+=1
+		valuelist[d]+=judge(table,playernumber)
 		return judge(table,color)
 	poslist=getcanpos(table,playernumber)
 	count=0
 	wi=len(poslist)
 	if wi==0:
-		return monte(table,-playernumber,playernumber,Depth,d,tabletimes)
-	
-	for i in range(min(wi,width)):
+		return monte(table,-playernumber,playernumber,Depth,d,tabletimes,valuelist)
+	corner=0
+	cornerpos=[]
+	for i in range(wi):
+		if (poslist[i].y==0 and poslist[i].x==0) or (poslist[i].y==0 and poslist[i].x==9) or (poslist[i].y==9 and poslist[i].x==0) or (poslist[i].y==9 and poslist[i].x==9):
+			corner+=1
+			cornerpos.append(poslist[i])
+			randlist.append(i)
+			tablemap=copy.deepcopy(table)
+			tablemap=turned(poslist[i],tablemap,playernumber)
+			count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
+	for i in range(min(wi-corner,width-corner)):
 		randindex=0
 		while True:
 			randindex=random.randint(0,wi-1)
@@ -114,7 +126,7 @@ def monte(table,playernumber,color,Depth,d,tabletimes):
 
 		tablemap=copy.deepcopy(table)
 		tablemap=turned(poslist[i],tablemap,playernumber)
-		count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes)
+		count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
 	return count
 
 def getcanpos(table,playernumber):
@@ -159,7 +171,7 @@ def drawmap(table,playernumber):
 def checkfield(x,y):
 	#範囲外か判断する処理
 	#範囲内だったら1,範囲外だったら0
-	return (1) if (0 <= x and x <= 7 and 0 <= y and y <= 7) else  0
+	return (1) if (0 <= x and x <= 9 and 0 <= y and y <= 9) else  0
 
 def reverse(x,y,i,table,playernumber):
 	if checkfield(x,y)==0:

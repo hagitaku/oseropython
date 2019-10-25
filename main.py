@@ -5,7 +5,6 @@ import os
 import random
 import threading
 import sys
-import socket
 
 sys.setrecursionlimit(999999999)
 
@@ -20,7 +19,7 @@ def runAI(table,playernumber):
 	posli=module.getcanpos(table,playernumber)
 	parallel=len(posli)
 	for i in range(parallel):
-		if (posli[i].y==0 and posli[i].x==0) or (posli[i].y==0 and posli[i].x==7) or (posli[i].y==7 and posli[i].x==0) or (posli[i].y==7 and posli[i].x==7):
+		if (posli[i].y==0 and posli[i].x==0) or (posli[i].y==0 and posli[i].x==9) or (posli[i].y==9 and posli[i].x==0) or (posli[i].y==9 and posli[i].x==9):
 			return posli[i]
 	threads=[]
 	value=[0.0 for i in range(parallel)]
@@ -83,10 +82,16 @@ def main():
 	turn=0
 	while True:
 		nowplayer=playercon[turn%2]
+		if len(module.getcanpos(roottable,nowplayer))==0 and len(module.getcanpos(roottable,-nowplayer))==0:
+			break
+		elif len(module.getcanpos(roottable,nowplayer))==0:
+			turn+=1
+			continue
 		module.drawmap(roottable,nowplayer)
 		print("turn",turn,"nowplayer",nowplayer)
 		if nowplayer!=playercolor:
 			AIpos=runAI(roottable,nowplayer)
+			print(AIpos.x,",",AIpos.y)
 			#AIpos=bogoAI(roottable,nowplayer)
 			if os.name=="nt":
 				os.system("cls")
