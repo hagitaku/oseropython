@@ -3,6 +3,7 @@ import socket
 from tkinter import font
 import threading
 import random
+import module
 
 drawflg=0
 players=[-1,1]
@@ -32,16 +33,21 @@ def checkfield(x,y):
 
 def socketserver():
 	#別スレッドでサーバーのプログラムを動かす
+	global roottable
 	playercount=0
 	randplay=0
+	player=[1,-1]
+	turn=0
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 		s.bind((addres, port))
 		s.listen(1)
 		while True:
+			nowplayer=player[turn%2]
+			print(nowplayer,playercount)
 			conn, addr = s.accept()
 			data = conn.recv(1024).decode()
 			if data == '':
-				conn.sendall("Invalid")
+				conn.sendall("Invalid".encode())
 				continue
 			if data=="Recruit" and playercount==0:
 				playercount+=1
@@ -54,10 +60,21 @@ def socketserver():
 				players.remove(playerid)
 				conn.sendall(str(playerid).encode())
 			elif data=="Recruit" and playercount==2:
-				conn.sendall("Invalid")
-			elif data.split(":")[0]=="turn":
-				pass
-
+				conn.sendall("Invalid".encode())
+			elif data.split(":")[0]=="turn" and int(data.split(":")[1])==nowplayer and playercount==2:
+				position=data.split(":")[2].split(",")
+				print("canput:",module.canput(int(position[0]),int(position[1]),roottable,int(data.split(":")[1])))
+				if module.canput(int(position[0]),int(position[1]),roottable,int(data.split(":")[1]))==1:
+					putpos=module.pos()
+					putpos.x=int(position[0])
+					putpos.y=int(position[1])
+					roottable=module.turned(putpos,roottable,data.split(":")[1])
+					conn.sendall("accept".encode())
+					turn+=1
+				else:
+					conn.sendall("Invalid".encode())
+			elif data.split(":")[0]=="turn" and int(data.split(":")[1])==-1*nowplayer and playercount==2:
+				conn.sendall("wait".encode())
 
 
 class Circle(): #円オブジェクト
