@@ -38,6 +38,9 @@ def socketserver():
 	randplay=0
 	player=[1,-1]
 	turn=0
+	put=module.pos()
+	put.x=100
+	put.y=100
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 		s.bind((addres, port))
 		s.listen(1)
@@ -49,6 +52,11 @@ def socketserver():
 			if data == '':
 				conn.sendall("Invalid".encode())
 				continue
+			elif data.split(":")[0]=="info":
+				if int(data.split(":")[1])==nowplayer:
+					conn.sendall(("enemy:"+str(put.x)+","+str(put.y)).encode())
+				elif int(data.split(":")[1])==-1*nowplayer:
+					conn.sendall("wait".encode())
 			if data=="Recruit" and playercount==0:
 				playercount+=1
 				playerid=random.choice(players)#
@@ -68,6 +76,8 @@ def socketserver():
 					putpos=module.pos()
 					putpos.x=int(position[0])
 					putpos.y=int(position[1])
+					put.x=int(position[0])
+					put.y=int(position[1])
 					roottable=module.turned(putpos,roottable,int(data.split(":")[1]))
 					conn.sendall("accept".encode())
 					turn+=1
