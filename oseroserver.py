@@ -68,9 +68,10 @@ def socketserver():
 					putpos=module.pos()
 					putpos.x=int(position[0])
 					putpos.y=int(position[1])
-					roottable=module.turned(putpos,roottable,data.split(":")[1])
+					roottable=module.turned(putpos,roottable,int(data.split(":")[1]))
 					conn.sendall("accept".encode())
 					turn+=1
+					module.drawmap(roottable,0)
 				else:
 					conn.sendall("Invalid".encode())
 			elif data.split(":")[0]=="turn" and int(data.split(":")[1])==-1*nowplayer and playercount==2:
@@ -112,7 +113,7 @@ class Application(tk.Frame):
 	def update(self):
 		#描画関数
 		global roottable
-
+		#module.drawmap(roottable,1)
 		ysize=len(roottable)
 		xsize=len(roottable[0])
 		wcount=0
