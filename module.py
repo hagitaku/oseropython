@@ -5,13 +5,14 @@ import sys
 sys.setrecursionlimit(9999999)
 
 width=10
-tablevalue=3000
+tablevalue=50
 class pos:
 	x=0
 	y=0
 
 dirx=[-1, 0, 1, 1, 1, 0,-1,-1]
 diry=[-1,-1,-1, 0, 1, 1, 1, 0]
+
 
 def turned(pos,table,playernumber):
 	#ひっくり返されたあとの盤面を返す
@@ -74,9 +75,9 @@ def launchmonte(table,playernumber,pos,i,valuelist):
 	Depth=1
 	tablemap=copy.deepcopy(table)
 	tablemap=turned(pos,tablemap,playernumber)
-	tabletimes=[0 for i in range(tablevalue)]
-	monte(tablemap,-playernumber,playernumber,Depth,i,tabletimes,valuelist)
-	print("i=",i,":tabletimes[i]",tabletimes[i])
+	tabletimes=[0 for i in range(96)]
+	while tabletimes[i]<tablevalue:
+		monte(tablemap,-playernumber,playernumber,Depth,i,tabletimes,valuelist)
 	valuelist[i]=valuelist[i]/tabletimes[i]
 	return 0
 
@@ -93,7 +94,6 @@ def judge(table,playernumber):
 	return 0 if teki>mikata else 1
 
 def monte(table,playernumber,color,Depth,d,tabletimes,valuelist):
-	randlist=[]
 	if tabletimes[d]==tablevalue:
 		return 0
 	if nullmap(table)==1 or len(getcanpos(table,1))==0 and len(getcanpos(table,-1))==0:
@@ -101,7 +101,6 @@ def monte(table,playernumber,color,Depth,d,tabletimes,valuelist):
 		valuelist[d]+=judge(table,playernumber)
 		return judge(table,color)
 	poslist=getcanpos(table,playernumber)
-	count=0
 	wi=len(poslist)
 	if wi==0:
 		return monte(table,-playernumber,playernumber,Depth,d,tabletimes,valuelist)
@@ -109,25 +108,12 @@ def monte(table,playernumber,color,Depth,d,tabletimes,valuelist):
 	cornerpos=[]
 	for i in range(wi):
 		if (poslist[i].y==0 and poslist[i].x==0) or (poslist[i].y==0 and poslist[i].x==9) or (poslist[i].y==9 and poslist[i].x==0) or (poslist[i].y==9 and poslist[i].x==9):
-			corner+=1
-			cornerpos.append(poslist[i])
-			randlist.append(i)
 			tablemap=copy.deepcopy(table)
 			tablemap=turned(poslist[i],tablemap,playernumber)
-			count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
-	for i in range(min(wi-corner,width-corner)):
-		randindex=0
-		while True:
-			randindex=random.randint(0,wi-1)
-			if randindex in randlist:
-				continue
-			randlist.append(randindex)
-			break
-
-		tablemap=copy.deepcopy(table)
-		tablemap=turned(poslist[i],tablemap,playernumber)
-		count+=monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
-	return count
+			return monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
+	tablemap=copy.deepcopy(table)
+	tablemap=turned(random.choice(poslist),tablemap,playernumber)
+	return monte(tablemap,-playernumber,playernumber,Depth+1,d,tabletimes,valuelist)
 
 def getcanpos(table,playernumber):
 	#playnumが置ける場所をposクラスのリストで返す処理。多分そこそこ計算量が多い

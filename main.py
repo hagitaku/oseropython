@@ -7,13 +7,13 @@ import threading
 import sys
 
 sys.setrecursionlimit(999999999)
-
+addres=""
 def bogoAI(table,playernumber):
     posli=module.getcanpos(table,playernumber)
     size=len(posli)
     if size==0:
         return 0
-    return posli[random.randint(0,size-1)]
+    return random.choice(posli)
 
 def runAI(table,playernumber):
 	posli=module.getcanpos(table,playernumber)
@@ -33,13 +33,7 @@ def runAI(table,playernumber):
 	for i in range(parallel):
 		threads[i].join()
 	print(value)
-	maxindex=0
-	maxvalue=value[0]
-	for i in range(1,parallel):
-		if maxvalue<value[i]:
-			maxindex=i
-			maxvalue=value[i]
-	return posli[maxindex]
+	return posli[np.argmax(value)]
 
 
 roottable=[
@@ -111,8 +105,15 @@ def main():
 			else:
 				os.system("clear")
 			continue
-		print("input y,x:",end="")
-		inpu=input()
+		inpu=""
+		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+			s.connect(('127.0.0.1', 50000))
+			# サーバにメッセージを送る
+			s.sendall(b'hello')
+			# ネットワークのバッファサイズは1024。サーバからの文字列を取得する
+			inp = s.recv(1024).decode()
+
+
 		if inpu=="break":
 			break
 		inp=inpu.split(",")
